@@ -1,62 +1,37 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useState } from 'react';
+import { Pressable, StyleSheet } from 'react-native';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
 
 export default function HomeScreen() {
+  const [showDetails, setShowDetails] = useState(false);
+
   return (
     <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
-
-        <ThemedText type="code" style={styles.code}>
-          get started
+      <ThemedView type="backgroundElement" style={styles.card}>
+        <ThemedText type="title">Abdul Moeed</ThemedText>
+        <ThemedText style={styles.subtitle} themeColor="textSecondary">
+          Software Development Student
         </ThemedText>
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
+        <Pressable
+          onPress={() => setShowDetails((previous) => !previous)}
+          style={({ pressed }) => [
+            styles.button,
+            pressed && styles.buttonPressed,
+          ]}>
+          <ThemedText style={styles.buttonText}>{showDetails ? 'Hide Details' : 'Show Details'}</ThemedText>
+        </Pressable>
 
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
+        {showDetails && (
+          <ThemedView style={styles.infoGroup}>
+            <ThemedText style={styles.infoItem}>Roll Number: 23I-3101</ThemedText>
+            <ThemedText style={styles.infoItem}>Section: B</ThemedText>
+            <ThemedText style={styles.infoItem}>Course: SMD Activity 3</ThemedText>
+          </ThemedView>
+        )}
+      </ThemedView>
     </ThemedView>
   );
 }
@@ -64,35 +39,45 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
-  },
-  heroSection: {
     alignItems: 'center',
     justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+    padding: 24,
   },
-  title: {
+  card: {
+    width: '100%',
+    maxWidth: 420,
+    borderRadius: 24,
+    padding: 24,
+    alignItems: 'center',
+    gap: 12,
+  },
+  subtitle: {
     textAlign: 'center',
   },
-  code: {
-    textTransform: 'uppercase',
+  button: {
+    marginTop: 8,
+    backgroundColor: '#3c87f7',
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 12,
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  buttonPressed: {
+    opacity: 0.8,
+  },
+  buttonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: 600,
+  },
+  infoGroup: {
+    width: '100%',
+    marginTop: 8,
+    paddingTop: 16,
+    gap: 10,
+    alignItems: 'center',
+  },
+  infoItem: {
+    fontSize: 18,
+    fontWeight: 600,
   },
 });
